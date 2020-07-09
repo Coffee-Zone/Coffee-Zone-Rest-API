@@ -5,13 +5,19 @@ const User = function (user) {
     this.username = user.username;
     this.firstname = user.firstname;
     this.surname = user.surname;
+    this.phoneNumber = user.phoneNumber,
+    this.location = user.location;
     this.bio = user.bio;
+    this.photoUrl = user.photoUrl;
+    this.totalCoffees = user.totalCoffees;
 }
 
 // Create a new user
 User.create = (newUser, result) => {
 
-    sql.query("INSERT INTO users (username, firstname, surname, bio) values (?, ?, ?, ?)", [newUser.username, newUser.firstname, newUser.surname, newUser.bio], (err, res) => { // sql.query("INSERT INTO users SET ?", newUser, (err, res) => {
+    //sql.query("INSERT INTO users SET ?", newUser, (err, res) => {
+
+    sql.query("INSERT INTO users (username, firstname, surname, phoneNumber, location, bio, photoUrl, totalCoffees) values (?, ?, ?, ?, ?, ?, ?, ?)", [newUser.username, newUser.firstname, newUser.surname, newUser.phoneNumber, newUser.location, newUser.bio, newUser.photoUrl, 1], (err, res) => {
 
         if (err) {
             console.log("error:", err)
@@ -19,16 +25,16 @@ User.create = (newUser, result) => {
             return
         }
 
-        console.log("created user: ", { id: res.insertId, ...newUser })
-        result(null, {id: res.insertId, ...newUser })
+        console.log(`created user: ${newUser.username}`, { username: res.insertUsername, ...newUser })
+        result(null, {id: res.insertUsername, ...newUser })
 
     })
 }
 
-// Find a user by Id
-User.findById = (userId, result) => {
+// Find a user by username
+User.findByUsername = (username, result) => {
 
-    sql.query(`SELECT * FROM users WHERE id = ${userId}`, (err, res) => {
+    sql.query(`SELECT * FROM users WHERE username = '${username}'`, (err, res) => {
 
         // Error
         if (err) {
@@ -67,11 +73,12 @@ User.getAll = result => {
 
 }
 
-User.updateById = (id, user, result) => {
+// Update user
+User.updateByUsername = (username, user, result) => {
 
     sql.query(
-        "UPDATE users SET username = ?, firstname = ?, surname = ?, bio = ? WHERE id = ?",
-        [user.username, user.firstname, user.surname, user.bio, id],
+        "UPDATE users SET username = ?, firstname = ?, surname = ?, phoneNumber = ?, location = ?, bio = ? WHERE username = ?",
+        [user.username, user.firstname, user.surname, user.phoneNumber, user.location, user.bio, username],
         (err, res) => {
 
             if(err){
@@ -86,8 +93,8 @@ User.updateById = (id, user, result) => {
                 return
             }
 
-            console.log("updated user", {id: id, ...user})
-            result(null, {id: id, ...user})
+            console.log("updated user", {username: username, ...user})
+            result(null, {username: username, ...user})
     })
 
 }
