@@ -24,7 +24,11 @@ exports.create = (req, res) => {
         username: req.body.username,
         firstname: req.body.firstname,
         surname: req.body.surname,
-        bio: req.body.bio
+        phoneNumber: req.body.phoneNumber,
+        location: req.body.location,
+        bio: req.body.bio,
+        photoUrl: req.body.photoUrl,
+        totalCoffees: req.body.totalCoffees
     })
 
     // Save User in the database
@@ -60,19 +64,19 @@ exports.findAll = (req, res) => {
 // Retrieve a user by id
 exports.findOne = (req, res) => {
  
-    User.findById(req.params.userId, (err, data) => {
+    User.findByUsername(req.params.username, (err, data) => {
         
         if (err) {
 
             if(err.kind === "not_found"){
                 
                 res.status(404).send({
-                    message: `Not found user with id ${req.params.userId}.`
+                    message: `Not found user with id ${req.params.username}.`
                 })
 
             } else {
                 res.status(500).send({
-                    message: `Error retrieving user with id ${req.params.userId}.`
+                    message: `Error retrieving user with id ${req.params.username}.`
                 })
             }
         } else {
@@ -82,7 +86,7 @@ exports.findOne = (req, res) => {
     
 }
 
-// Update a user by id
+// Update a user by username
 exports.update = (req, res) => {
 
     // Validate Request
@@ -92,17 +96,17 @@ exports.update = (req, res) => {
         })
     }
 
-    User.updateById(req.params.userId, new User(req.body), (err, data) => {
+    User.updateByUsername(req.params.username, new User(req.body), (err, data) => {
         
         if (err) {
 
             if (err.kind === "not_found") {
                 res.status(404).send({
-                    message: `Not found User with id ${req.params.userId}`
+                    message: `Not found User with username: ${req.params.username}`
                 })
             } else {
                 res.status(500).send({
-                    message: `Error updating userer with id ${req.params.userId}`
+                    message: `Error updating user with username ${req.params.username}`
                 })
             }           
         } else {
